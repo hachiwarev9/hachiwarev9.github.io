@@ -5,7 +5,7 @@
 
 const contactForm = document.querySelector("#contact-form");
 const formNote = document.querySelector("#form-note");
-const submitButton = contactForm?.querySelector('button[type="submit"]');
+const submitButton = document.querySelector("#submit-btn");
 
 if (contactForm && formNote && submitButton) {
 
@@ -18,10 +18,10 @@ if (contactForm && formNote && submitButton) {
             return;
         }
 
-        const originalButtonText = submitButton.innerHTML;
+        const originalText = submitButton.innerHTML;
 
         submitButton.disabled = true;
-        submitButton.innerHTML = 'Sending... <i class="bx bx-loader-alt"></i>';
+        submitButton.textContent = "Sending...";
 
         formNote.textContent = "Sending your message...";
         formNote.style.color = "#00d4ff";
@@ -36,10 +36,12 @@ if (contactForm && formNote && submitButton) {
                 }
             });
 
+            const result = await response.json();
+
             if (response.ok) {
 
                 formNote.textContent =
-                    "Thank you! Your message has been sent successfully. I'll get back to you soon!";
+                    "Success! Your message has been sent. Thank you for contacting me!";
 
                 formNote.style.color = "#00d4ff";
 
@@ -47,28 +49,30 @@ if (contactForm && formNote && submitButton) {
 
             } else {
 
-                const data = await response.json();
+                console.error("Formspree response:", result);
 
-                formNote.textContent =
-                    data.errors
-                        ? data.errors.map(error => error.message).join(", ")
-                        : "Oops! Something went wrong. Please try again.";
+                const errorMessage = result.errors
+                    ? result.errors.map(error => error.message).join(", ")
+                    : `Submission failed (Error ${response.status}).`;
 
+                formNote.textContent = errorMessage;
                 formNote.style.color = "#ff6b6b";
 
             }
 
         } catch (error) {
 
+            console.error("Form submission error:", error);
+
             formNote.textContent =
-                "Unable to send your message. Please check your internet connection and try again.";
+                "Connection error. Please check your internet connection or try again later.";
 
             formNote.style.color = "#ff6b6b";
 
         } finally {
 
             submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
+            submitButton.innerHTML = originalText;
 
         }
 
