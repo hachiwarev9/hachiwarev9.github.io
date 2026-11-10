@@ -642,3 +642,15 @@ img {
         transition: none !important;
     }
 }
+
+/* FORMSPREE CONTACT FORM */
+
+.contact-form .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.form-note {
+    transition: color 0.3s ease;
+}
